@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+    /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+    .row.content {height: 1500px}
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height: auto;}
+    }
+
+
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row content">
+        <div class="col-sm-3 sidenav">
+            <h4>John's Blog</h4>
+            <ul class="nav nav-pills nav-stacked">
+                <li class="active"><a href="#section1">Home</a></li>
+                <li><a href="#section2">Friends</a></li>
+                <li><a href="#section3">Family</a></li>
+                <li><a href="#section3">Photos</a></li>
+            </ul>
+            <br>
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search Blog..">
+                <span class="input-group-btn">
+          <button class="btn btn-default" type="button">
+            <span class="glyphicon glyphicon-search"></span>
+          </button>
+        </span>
+            </div>
+        </div>
+
+        <div class="col-sm-9">
+            <form>
+                <div class="form-group"><!--Post Title-->
+                    <label for="post_title">Post Title</label>
+                    <input type="text" class="form-control" id="post_title" placeholder="Please input title here">
+                </div><!--End Post Title-->
+                <div class="form-group"><!--Community Id-->
+                    <label for="community_id">Community ID</label>
+                    <?php
+                        mysql_connect("cmpe281.c0hrznkaxb2t.us-west-1.rds.amazonaws.com", "admin","12345678") or die(mysql_error());
+                        mysql_select_db("csnet") or die(mysql_error());
+
+                        $query = "SELECT community_id FROM Community";
+                        $result = mysql_query($query) or die(mysql_error()."[".$query."]");
+                    ?>
+
+                    <select multiple class="form-control" id="community_id">
+                        <?php
+                            while ($row = mysql_fetch_array($result))
+                            {
+                                echo "<option value='".$row['community_id']."'>'".$row['community_id']."'</option>";
+                            }
+                        ?>
+                    </select>
+                </div><!--End Community Id-->
+                <div class="form-group"><!--Content-->
+                    <label for="content">Content</label>
+                    <textarea class="form-control" id="content" rows="3"></textarea>
+                </div><!--Content-->
+                <div class="form-group">
+                    <label for="exampleInputFile">File input</label>
+                    <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
+                    <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level help text for
+                        the above input. It's a bit lighter and easily wraps to a new line.
+                    </small>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<footer class="container-fluid">
+    <p>Footer Text</p>
+</footer>
+
+</body>
+</html>

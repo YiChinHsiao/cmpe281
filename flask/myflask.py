@@ -1,8 +1,12 @@
-from flask import Flask, render_template, session, request, redirect, url_for
+from flask import Flask, render_template, session, request, redirect, url_for, flash
 from application import db
 from application.models import *
 import os
 from flask_mail import Mail,  Message
+from flask_bootstrap import Bootstrap
+from flask_login import login_required, login_user, logout_user
+from flask_login import LoginManager
+from forms import LoginForm, RegistrationForm
 
 application = Flask(__name__)
 application.secret_key = os.urandom(32)
@@ -18,12 +22,97 @@ mail = Mail(application)
 
 db.create_all()
 
+Bootstrap(application)
+login_manager = LoginManager()
+login_manager.init_app(application)
+login_manager.login_message = "You must be logged in to access this page."
+login_manager.login_view = "login"
+
 app_root = 'http://127.0.0.1:5000'
 
-@application.route('/', methods=['Get', 'POST'])
+@application.route('/')
+def homepage():
+    """
+    Render the homepage template on the / route
+    """
+    return render_template('home/index.html', title="Welcome")
+
+@application.route('/dashboard')
+@login_required
+def dashboard():
+    """
+    Render the dashboard template on the /dashboard route
+    """
+    return redirect(url_for('main'))
+
+@application.route('/register', methods=['GET', 'POST'])
+def register():
+    """
+    Handle requests to the /register route
+    Add an employee to the database through the registration form
+    """
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(email=form.email.data,
+                            user_id=form.user_id.data,
+                            phone=form.phone.data,                            
+                            password=form.password.data)
+
+        # add employee to the database
+        db.session.add(user)
+        db.session.commit()
+        flash('You have successfully registered! You may now login.')
+
+        # redirect to the login page
+        return redirect(url_for('login'))
+
+    # load registration template
+    return render_template('auth/register.html', form=form, title='Register')
+
+@application.route('/login', methods=['GET', 'POST'])
+def login():
+    """
+    Handle requests to the /login route
+    Log an employee in through the login form
+    """
+    form = LoginForm()
+    if form.validate_on_submit():
+
+        # check whether employee exists in the database and whether
+        # the password entered matches the password in the database
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is not None and user.verify_password(
+                form.password.data):
+            # log employee in
+            login_user(user)
+            session['user_id'] = user.user_id
+
+            # redirect to the dashboard page after login
+            return redirect(url_for('dashboard'))
+
+        # when login details are incorrect
+        else:
+            flash('Invalid email or password.')
+
+    # load login template
+    return render_template('auth/login.html', form=form, title='Login')
+
+@application.route('/logout')
+@login_required
+def logout():
+    """
+    Handle requests to the /logout route
+    Log an employee out through the logout link
+    """
+    logout_user()
+    flash('You have successfully been logged out.')
+
+    # redirect to the login page
+    return redirect(url_for('login'))
+
 @application.route('/main', methods=['Get', 'POST'])
 def main():
-	session['user_id'] = 'Gary'
+	#session['user_id'] = 'Admin'
 	name = session['user_id']
 	communities = Community.query.all()
 	my_community = User_community.query.filter_by(user_id=name).all()
@@ -64,8 +153,8 @@ def create_community():
 			db.session.add(new_user_community)
 			db.session.add(new_moderator_community)
 			db.session.commit()
-			#user = User.query.filter_by(user_id=name).first()
-			#send_email(email=user.email, subject="You have been added to community {}".format(new_community.community_id), content="")
+			user = User.query.filter_by(user_id=name).first()
+			send_mail(email=user.email, subject="You have been added to community {}".format(new_community.community_id), content="Welcome to our community!")
 			return redirect(url_for('main'))
 		elif Community.query.filter_by(community_id=request.form.get('new_community_id')).first(): 
 			error = 'Community name already existed'
@@ -199,9 +288,31 @@ def add_moderator():
 
 	return redirect(url_for('admin', error=error))
 
-@application.route('/community/<community_id>')
+@application.route('/community/<community_id>', methods=['Get', 'POST'])
 def community(community_id):
-	return render_template('community.html', community_id=community_id)
+    posts = Post.query.all()
+    return render_template('community.html', community_id=community_id, posts=posts)
+
+@application.route('/create_post', methods=['Get', 'POST'])
+def create_post():
+    name = session['user_id']
+    communities = Community.query.all() #for the form selection
+
+    if request.form.get('post_title'):
+        new_post_id = request.form.get('community_id')
+        new_community_id = request.form.get('community_id')
+        new_content = request.form.get('content')
+        new_title = request.form.get('post_title')
+
+
+        new_post = Post(new_post_id, new_community_id, name, new_content, new_title)
+
+        db.session.add(new_post)
+        db.session.commit()
+    else:
+        return render_template('create_post.html', communities_id=communities, app_root = app_root)
+
+    return render_template('create_post.html', communities_id=communities, app_root = app_root)
 
 @application.route('/email_test')
 def send_mail(email='eric.clone@gmail.com', subject='Testing', content='none'):
@@ -212,6 +323,10 @@ def send_mail(email='eric.clone@gmail.com', subject='Testing', content='none'):
         body=content
     )
     return 'Successfully sent email to ' + email
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
 	
 if __name__ == '__main__':
     application.run(debug = True)

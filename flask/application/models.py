@@ -1,24 +1,50 @@
-from application import db
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
-class User(db.Model):
+from application import db
+from application import login_manager
+
+class User(UserMixin, db.Model):
     __tablename__ = 'User'
 
     user_id = db.Column(db.String(30), primary_key=True)
-    password = db.Column(db.String(20), index=True, unique=False)
-    email = db.Column(db.String(30), index=True, unique=False)
+    email = db.Column(db.String(60), index=True, unique=False)
+    password_hash = db.Column(db.String(128), index=True, unique=False)
     phone = db.Column(db.String(15), index=True, unique=False)
-    isAdmin = db.Column(db.Boolean, index=True, unique=False)
+    isAdmin = db.Column(db.Boolean, index=True, unique=False, default=False)
+    
+    @property
+    def password(self):
+        """
+        Prevent pasword from being accessed
+        """
+        raise AttributeError('password is not a readable attribute.')
 
-    def __init__(self, user_id, password, email, phone, isAdmin):
+    @password.setter
+    def password(self, password):
+        """
+        Set password to a hashed password
+        """
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        """
+        Check if hashed password matches actual password
+        """
+        return check_password_hash(self.password_hash, password)
+
+    def __init__(self, user_id, email, password, phone):
         self.user_id = user_id
-        self.password = password
         self.email = email
+        self.password= password
         self.phone = phone
-        self.isAdmin = isAdmin
         
     def __repr__(self):
 
-        return '<User %r>' % self.user_id    
+        return '<User %r>' % self.user_id   
+        
+    def get_id(self):
+        return unicode(self.user_id)     
 
 class User_community(db.Model):
     __tablename__ = 'User_community'
@@ -55,14 +81,14 @@ class Post(db.Model):
     community_id = db.Column(db.String(30), index=True, unique=False)
     poster_id = db.Column(db.String(30), index=True, unique=False)
     content = db.Column(db.String(2000), index=True, unique=False)
-    time = db.Column(db.DateTime, index=True, unique=False)
+    title = db.Column(db.String(50), index=True, unique=False)
 
-    def __init__(self, post_id, community_id, poster_id, content, time):
+    def __init__(self, post_id, community_id, poster_id, content, title):
         self.post_id = post_id
         self.community_id = community_id
         self.poster_id = poster_id
         self.content = content
-        self.time = time
+        self.title = title
         
     def __repr__(self):
 

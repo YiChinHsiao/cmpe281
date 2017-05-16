@@ -2,9 +2,19 @@ from flask import Flask, render_template, session, request
 from application import db
 from application.models import *
 import os
+from flask_mail import Mail,  Message
 
 application = Flask(__name__)
 application.secret_key = os.urandom(32)
+
+application.config.update(
+    MAIL_SERVER = 'smtp.gmail.com',
+    MAIL_PORT = 465,
+    MAIL_USE_SSL = True,
+    MAIL_USERNAME = 'cmpeapp@gmail.com',
+    MAIL_PASSWORD = 'cmpeapp.1234',
+)
+mail = Mail(application)
 
 db.create_all()
 
@@ -118,8 +128,18 @@ def admin():
     users_id = [user.user_id for user in users if user.isAdmin == False]
     communities = Community.query.all()
     communities_id = [community.community_id for community in communities]
-    moderator_communities = Moderator_community.query.all()
+    moderator_communities = db.session.query(Moderator_community).all()
     return render_template('admin.html', users_id=users_id, communities_id=communities_id, moderator_communities=moderator_communities)
+
+@application.route('/email_test')
+def send_mail(email='eric.clone@gmail.com', subject='Testing', content='none'):
+    msg = mail.send_message(
+        subject,
+        sender='cmpeapp@gmail.com',
+        recipients=[email],
+        body=content
+    )
+    return 'Successfully sent email to ' + email 
 
 if __name__ == '__main__':
     application.run(debug = True)

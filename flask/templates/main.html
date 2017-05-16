@@ -4,41 +4,80 @@
 
 <head>
     <title>Main</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+    /* Add a black background color to the top navigation */
+	.topnav {
+    	background-color: #333;
+    	overflow: hidden;
+	}
+	
+    /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+    .row.content {height: 600px}
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height: auto;}
+    }
+
+
+    </style>
 </head>
 
 <body>
-    <form>
-    <p align='center'>{{ name }}
-    <button formaction={{app_root}}>Log out</button>
-    {% if isAdmin %}
-    <button formaction={{app_root}}/admin>Admin Dashboard</button>
-    {% endif %}
-	</p></form><br>
-    
-    <table align='center'>
-    <tr>
-    	<th align='center' style='width: 300px'>    
-    	<form action='/join_community' method='post'>
-    	Community List<br>
-    	{% for community_id in communities_id %}
-    	{{ community_id }}
-    	<input type='submit' name={{ community_id }} value='Join'/><br>
-    	{% endfor %}
-    	</form> 
-    	
-    	<form>
-    	<button formaction={{app_root}}/create_community>Create Community</button>
-		</form>    
-    	</th>
-    	
-    	<th align='center' style='width: 300px'>   
-    	My Community<br>
-    	{% for community_id in my_community_id %}
-    	<a href={{app_root}}/community/{{ community_id }}>{{ community_id }}</a><br>      
-    	{% endfor %}
-    	</th>
-    </tr>
-    </table>
+
+<div class="topnav" id="myTopnav">
+	<h4 align='right' style='color: white; padding: 10px 10px 10px 10px;'>{{ name }}
+	{% if isAdmin %}<a href={{app_root}}/admin class='btn btn-info' role='button' style='color: white;'>
+	Admin Dashboard</a>{% endif %}
+	<a href={{app_root}}/main class='btn btn-info' role='button' style='color: white;'>Log Out</a></h4>
+</div>
+
+<div class="container-fluid">
+    <div class="row content">
+        <div class="col-sm-3 sidenav" style='text-align: center'>
+    		<br><br><h4 style='black;'>My Community</h4>
+    		{% for community_id in communities_id %}
+    		{{ community_id }}
+    		<input type='submit' name={{ community_id }} value='Join'/><br>
+    		{% endfor %}
+    		</form><br>
+    		<a href={{app_root}}/create_community class='btn btn-info' role='button'
+    				style='color: white;'>Create Community</a> 
+        </div>
+        
+        <div class="col-sm-9 sidenav" style='text-align: center'>
+            <br><br><h4 style='black;'>My Community</h4>
+            <ul class="nav nav-pills nav-stacked">
+            	{% for community_id in my_community_id %}
+            	<li><a href={{app_root}}/community/{{ community_id }}>{{ community_id }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
 </body>
 
 </html>

@@ -18,13 +18,14 @@
     <table align='center'>
     <tr>
     	<th align='center' style='width: 300px'>    
-    	<form action='/main' method='post'>
+    	<form action='/join_community' method='post'>
     	Community List<br>
     	{% for community_id in communities_id %}
     	{{ community_id }}
     	<input type='submit' name={{ community_id }} value='Join'/><br>
     	{% endfor %}
     	</form> 
+    	
     	<form>
     	<button formaction={{app_root}}/create_community>Create Community</button>
 		</form>    

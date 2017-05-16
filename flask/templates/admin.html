@@ -7,11 +7,13 @@
 </head>
 
 <body>
-    <br><br><br><br><br>
+    <br><br>
+    <p align='center'>{{ error }}
+    </p><br><br><br>
     <table align='center'>
     <tr>
     	<th align='left' style='width: 200px'>
-    	<form action='/admin' method='post'>
+    	<form action='/delete_user' method='post'>
     	{% for user_id in users_id %}
     	{{ user_id }}
     	<input type='submit' name={{ user_id }} value='Delete User'/><br>
@@ -20,7 +22,7 @@
     	</th>
     	
     	<th align='left' style='width: 250px'>
-    	<form action='/admin' method='post'>
+    	<form action='/delete_community' method='post'>
     	{% for community_id in communities_id %}
     	{{ community_id }}
     	<input type='submit' name={{ community_id }} value='Delete Community'/><br>
@@ -29,13 +31,26 @@
     	</th>
     	
     	<th align='left' style='width: 400px'>
-    	<form action='/admin' method='post'>
+    	<form action='/delete_moderator' method='post'>
     	{% for moderator_community in moderator_communities %}
     	{{ moderator_community.moderator }} : Moderator of {{ moderator_community.community_id }}
     	<input type='submit' name={{ moderator_community.community_id }} value='Delete Moderator'/>
     	<input type='hidden' name={{ moderator_community.moderator }} value='Delete Moderator'/><br>
     	{% endfor %}
-    	</form>  
+    	</form>
+    	<form action='/add_moderator' method='post'>
+    	<select name='community_id'>
+    	{% for community_id in communities_id %}
+    	<option value={{ community_id }}>{{ community_id }}</option>
+    	{% endfor %}
+    	</select>
+    	<select name='user_id'>
+    	{% for user_id in users_id %}
+    	<option value={{ user_id }}>{{ user_id }}</option>
+    	{% endfor %}
+    	</select>
+    	<input type='submit' name='AddModerator' value='Add Moderator'/><br>
+    	</form>   
     	</th>
     </tr>
     </table>

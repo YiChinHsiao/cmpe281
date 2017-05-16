@@ -35,9 +35,32 @@
     }
 
 
+
     </style>
 </head>
 <body>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">CSNet</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="{{app_root}}/">Home</a></li>
+        <li><a href="{{app_root}}/main">Main</a></li>
+        <li ><a href="{{app_root}}/admin">Admin</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
 <div class="container-fluid">
     <div class="row content">
@@ -49,6 +72,8 @@
                 <li><a href="#section3">Family</a></li>
                 <li><a href="#section3">Photos</a></li>
             </ul>
+            <a href={{app_root}}/create_post class='btn btn-info' role='button'
+    				style='color: white;'>Create Post</a> 
             <br>
             <div class="input-group">
                 <input type="text" class="form-control" placeholder="Search Blog..">
@@ -61,43 +86,21 @@
         </div>
 
         <div class="col-sm-9">
-            <form>
-                <div class="form-group"><!--Post Title-->
-                    <label for="post_title">Post Title</label>
-                    <input type="text" class="form-control" id="post_title" placeholder="Please input title here">
-                </div><!--End Post Title-->
-                <div class="form-group"><!--Community Id-->
-                    <label for="community_id">Community ID</label>
-                    <?php
-                        mysql_connect("cmpe281.c0hrznkaxb2t.us-west-1.rds.amazonaws.com", "admin","12345678") or die(mysql_error());
-                        mysql_select_db("csnet") or die(mysql_error());
-
-                        $query = "SELECT community_id FROM Community";
-                        $result = mysql_query($query) or die(mysql_error()."[".$query."]");
-                    ?>
-
-                    <select multiple class="form-control" id="community_id">
-                        <?php
-                            while ($row = mysql_fetch_array($result))
-                            {
-                                echo "<option value='".$row['community_id']."'>'".$row['community_id']."'</option>";
-                            }
-                        ?>
-                    </select>
-                </div><!--End Community Id-->
-                <div class="form-group"><!--Content-->
-                    <label for="content">Content</label>
-                    <textarea class="form-control" id="content" rows="3"></textarea>
-                </div><!--Content-->
-                <div class="form-group">
-                    <label for="exampleInputFile">File input</label>
-                    <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
-                    <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level help text for
-                        the above input. It's a bit lighter and easily wraps to a new line.
-                    </small>
+            <div class="container">
+                <h1>Welcome to the Community Page</h1>
+                {% for post in posts %}
+                <div class="well" style="padding:5px;">
+                    <h2>{{post.title}}</h2>
+                    <p>Post ID: {{post.post_id}}</p>
+                    <p>Community ID: {{post.community_id}}</p>
+                    <hr>
+                    <div class="well" style="background-color:white">
+                        <p>{{post.content}}</p>
+                    </div>
+                    <p>Posted By: {{post.poster_id}}</p>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+                {% endfor %}
+            </div> <!-- /container -->
         </div>
     </div>
 </div>

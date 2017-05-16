@@ -1,3 +1,4 @@
+{% block contents %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,6 +38,28 @@
     </style>
 </head>
 <body>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">CSNet</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="{{app_root}}/">Home</a></li>
+        <li><a href="{{app_root}}/main">Main</a></li>
+        <li class="active"><a href="{{app_root}}/admin">Admin</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
 <div class="container-fluid">
     <div class="row content">
@@ -60,43 +83,34 @@
         </div>
 
         <div class="col-sm-9">
-            <form>
+            <!--Create Post Form-->
+            <form action='/create_post' method='post'>
                 <div class="form-group"><!--Post Title-->
                     <label for="post_title">Post Title</label>
-                    <input type="text" class="form-control" id="post_title" placeholder="Please input title here">
+                    <input type="text" class="form-control" id="post_title" name="post_title" placeholder="Please input title here">
                 </div><!--End Post Title-->
+                <div class="form-group"><!--Content-->
+                    <label for="post_id">Post ID</label>
+                    <input type="text" class="form-control" id="post_id" name="post_id" placeholder="Please input post id here">
+                </div><!--Content-->
                 <div class="form-group"><!--Community Id-->
                     <label for="community_id">Community ID</label>
-                    <?php
-                        mysql_connect("cmpe281.c0hrznkaxb2t.us-west-1.rds.amazonaws.com", "admin","12345678") or die(mysql_error());
-                        mysql_select_db("csnet") or die(mysql_error());
+                    <select multiple class="form-control" id="community_id" name="community_id">
 
-                        $query = "SELECT community_id FROM Community";
-                        $result = mysql_query($query) or die(mysql_error()."[".$query."]");
-                    ?>
+                        {% for communities_id in communities_id %}
+                            <option name={{ communities_id.community_id }} value={{ communities_id.community_id }}>{{ communities_id.community_id }}</option>
+                        {% endfor %}
 
-                    <select multiple class="form-control" id="community_id">
-                        <?php
-                            while ($row = mysql_fetch_array($result))
-                            {
-                                echo "<option value='".$row['community_id']."'>'".$row['community_id']."'</option>";
-                            }
-                        ?>
                     </select>
+
                 </div><!--End Community Id-->
                 <div class="form-group"><!--Content-->
                     <label for="content">Content</label>
-                    <textarea class="form-control" id="content" rows="3"></textarea>
+                    <textarea class="form-control" id="content" name="content" rows="3"></textarea>
                 </div><!--Content-->
-                <div class="form-group">
-                    <label for="exampleInputFile">File input</label>
-                    <input type="file" class="form-control-file" id="exampleInputFile" aria-describedby="fileHelp">
-                    <small id="fileHelp" class="form-text text-muted">This is some placeholder block-level help text for
-                        the above input. It's a bit lighter and easily wraps to a new line.
-                    </small>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary" name="create_post">Submit</button>
             </form>
+            <!--END: Create Post Form-->
         </div>
     </div>
 </div>
@@ -111,3 +125,4 @@
 
 </body>
 </html>
+{% endblock %}

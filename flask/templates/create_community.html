@@ -4,12 +4,54 @@
 
 <head>
     <title>Create Community</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+    body{
+    	background-color: #f1f1f1;
+    }
+    
+    /* Add a black background color to the top navigation */
+	.topnav {
+    	background-color: #f1f1f1;
+    	overflow: hidden;
+	}
+	
+    /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+    .row.content {height: 600px}
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height: auto;}
+    }
+
+
+    </style>
 </head>
 
 <body>
-	{% if error %}
-	<p align='center'>{{ error }}</p>
-	{% endif %}
+<div>
+	<br><br><br><br><br><br>
     <form action='/create_community' method='post'>
     <p align='center'>
     Enter the new community name:
@@ -19,6 +61,8 @@
     <input type='submit' name='create_community' value='Create'/>
     </p>
     </form>
+    <br><br><h5 align='center' style='color: red'>{{ error }}</h5>
+</div>
 </body>
 
 </html>

@@ -3,57 +3,102 @@
 <html lang="en">
 
 <head>
-    <title>Admin Dashboard</title>
+	<title>Admin Dashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+    /* Add a black background color to the top navigation */
+	.topnav {
+    	background-color: #333;
+    	overflow: hidden;
+	}
+	
+    /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+    .row.content {height: 650px}
+
+    /* Set gray background color and 100% height */
+    .sidenav {
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height: auto;}
+    }
+
+
+    </style>
 </head>
 
 <body>
-    <br><br>
-    <p align='center'>{{ error }}
-    </p><br><br><br>
-    <table align='center'>
-    <tr>
-    	<th align='left' style='width: 200px'>
-    	<form action='/delete_user' method='post'>
-    	{% for user_id in users_id %}
-    	{{ user_id }}
-    	<input type='submit' name={{ user_id }} value='Delete User'/><br>
-    	{% endfor %}
-    	</form>   
-    	</th>
-    	
-    	<th align='left' style='width: 250px'>
-    	<form action='/delete_community' method='post'>
-    	{% for community_id in communities_id %}
-    	{{ community_id }}
-    	<input type='submit' name={{ community_id }} value='Delete Community'/><br>
-    	{% endfor %}
-    	</form> 
-    	</th>
-    	
-    	<th align='left' style='width: 400px'>
-    	<form action='/delete_moderator' method='post'>
-    	{% for moderator_community in moderator_communities %}
-    	{{ moderator_community.moderator }} : Moderator of {{ moderator_community.community_id }}
-    	<input type='submit' name={{ moderator_community.community_id }} value='Delete Moderator'/>
-    	<input type='hidden' name={{ moderator_community.moderator }} value='Delete Moderator'/><br>
-    	{% endfor %}
-    	</form>
-    	<form action='/add_moderator' method='post'>
-    	<select name='community_id'>
-    	{% for community_id in communities_id %}
-    	<option value={{ community_id }}>{{ community_id }}</option>
-    	{% endfor %}
-    	</select>
-    	<select name='user_id'>
-    	{% for user_id in users_id %}
-    	<option value={{ user_id }}>{{ user_id }}</option>
-    	{% endfor %}
-    	</select>
-    	<input type='submit' name='AddModerator' value='Add Moderator'/><br>
-    	</form>   
-    	</th>
-    </tr>
-    </table>
+
+<div class="container-fluid">
+    <div class="row content">
+        <div class="col-sm-3 sidenav" style='text-align: center; border:1px solid black'>
+    		<br><br><h4 align='center' style='color: blue'>User</h4><br>
+    		<form action='/delete_user' method='post'>
+    		{% for user_id in users_id %}
+    		{{ user_id }}
+    		<input type='submit' name={{ user_id }} value='Delete User'/><br>
+    		{% endfor %}
+    		</form>  
+        </div>
+        
+        <div class="col-sm-4 sidenav" style='text-align: center; border:1px solid black'>
+            <br><br><h4 align='center' style='color: blue'>My Community</h4><br>
+            <form action='/delete_community' method='post'>
+    		{% for community_id in communities_id %}
+    		{{ community_id }}
+    		<input type='submit' name={{ community_id }} value='Delete Community'/><br>
+    		{% endfor %}
+    		</form> 
+        </div>
+        
+        <div class="col-sm-5 sidenav" style='text-align: center; border:1px solid black'>
+            <br><br><h4 align='center' style='color: blue'>Moderator</h4><br>
+            <form action='/delete_moderator' method='post'>
+    		{% for moderator_community in moderator_communities %}
+    		{{ moderator_community.moderator }} : Moderator of {{ moderator_community.community_id }}
+    		<input type='submit' name={{ moderator_community.community_id }} value='Delete Moderator'/>
+    		<input type='hidden' name={{ moderator_community.moderator }} value='Delete Moderator'/><br>
+    		{% endfor %}
+    		</form>
+    		<form action='/add_moderator' method='post'>
+    		<select name='community_id'>
+    		{% for community_id in communities_id %}
+    		<option value={{ community_id }}>{{ community_id }}</option>
+    		{% endfor %}
+    		</select>
+    		<select name='user_id'>
+    		{% for user_id in users_id %}
+    		<option value={{ user_id }}>{{ user_id }}</option>
+    		{% endfor %}
+    		</select>
+    		<input type='submit' name='AddModerator' value='Add Moderator'/><br>
+    		</form>
+    		<br><h5 align='center' style='color: red'>{{ error }}</h5> 
+        </div>
+    </div>
+</div>
+
+<footer class="container-fluid">
+</footer>
+
 </body>
 
 </html>

@@ -58,7 +58,7 @@
     <div class="row content">
         <div class="col-sm-3 sidenav" style='text-align: center'>
     		<br><br><h4>My Community</h4>
-    		<form action='/joinh_community' method='post'>
+    		<form action='/join_community' method='post'>
     		{% for community_id in communities_id %}
     		{{ community_id }}
     		<input type='submit' name={{ community_id }} value='Join'/><br>

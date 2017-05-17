@@ -28,7 +28,8 @@ login_manager.init_app(application)
 login_manager.login_message = "You must be logged in to access this page."
 login_manager.login_view = "login"
 
-app_root = 'http://127.0.0.1:5000'
+# app_root = 'http://127.0.0.1:5000'
+app_root = 'http://ec2-54-215-139-24.us-west-1.compute.amazonaws.com:5000'
 
 @application.route('/')
 def homepage():
